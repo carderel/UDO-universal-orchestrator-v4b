@@ -14,6 +14,45 @@ YELLOW='\033[1;33m'
 BLUE='\033[0;34m'
 NC='\033[0m'
 
+# Parse command line arguments
+UPDATE_MODE=""
+while [[ $# -gt 0 ]]; do
+    case $1 in
+        --update|-u)
+            UPDATE_MODE="update"
+            shift
+            ;;
+        --overwrite|-o)
+            UPDATE_MODE="overwrite"
+            shift
+            ;;
+        --force|-f)
+            UPDATE_MODE="overwrite"
+            shift
+            ;;
+        --help|-h)
+            echo "UDO v${VERSION} Installer"
+            echo ""
+            echo "Usage: install.sh [OPTIONS]"
+            echo ""
+            echo "Options:"
+            echo "  --update, -u     Update core files only (preserves project data)"
+            echo "  --overwrite, -o  Full overwrite (replaces everything)"
+            echo "  --force, -f      Same as --overwrite"
+            echo "  --help, -h       Show this help message"
+            echo ""
+            echo "Examples:"
+            echo "  Fresh install:  curl -fsSL URL/install.sh | bash"
+            echo "  Update:         curl -fsSL URL/install.sh | bash -s -- --update"
+            echo "  Overwrite:      curl -fsSL URL/install.sh | bash -s -- --overwrite"
+            exit 0
+            ;;
+        *)
+            shift
+            ;;
+    esac
+done
+
 echo -e "${GREEN}"
 echo "╔════════════════════════════════════════════════════════════╗"
 echo "║         UDO - Universal Dynamic Orchestrator v${VERSION}         ║"
@@ -40,49 +79,27 @@ if [ -f "ORCHESTRATOR.md" ] || [ -f "START_HERE.md" ]; then
     echo -e "  Latest version:    ${BLUE}${VERSION}${NC}"
     echo ""
     
-    if [ "$INSTALLED_VERSION" = "$VERSION" ]; then
-        echo -e "${GREEN}You already have the latest version.${NC}"
+    # If no mode specified via command line, show instructions
+    if [ -z "$UPDATE_MODE" ]; then
+        echo -e "${RED}Cannot prompt interactively when piped.${NC}"
         echo ""
+        echo "Please run with one of these options:"
+        echo ""
+        echo -e "  ${YELLOW}To update (preserve project data):${NC}"
+        echo "  curl -fsSL $REPO_URL/install.sh | bash -s -- --update"
+        echo ""
+        echo -e "  ${YELLOW}To overwrite everything:${NC}"
+        echo "  curl -fsSL $REPO_URL/install.sh | bash -s -- --overwrite"
+        echo ""
+        exit 1
     fi
-    
-    echo "What would you like to do?"
-    echo ""
-    echo "  1) Cancel installation"
-    echo "  2) Update core files only (preserves project data)"
-    echo "  3) Full overwrite (replaces everything - DESTRUCTIVE)"
-    echo ""
-    read -p "Enter choice [1-3]: " choice
-    
-    case $choice in
-        1)
-            echo "Installation cancelled."
-            exit 0
-            ;;
-        2)
-            echo ""
-            echo -e "${YELLOW}Updating core UDO files...${NC}"
-            UPDATE_MODE="update"
-            ;;
-        3)
-            echo ""
-            read -p "Are you sure? This will overwrite all UDO files. Type 'yes' to confirm: " confirm
-            if [ "$confirm" != "yes" ]; then
-                echo "Installation cancelled."
-                exit 0
-            fi
-            UPDATE_MODE="overwrite"
-            ;;
-        *)
-            echo "Invalid choice. Installation cancelled."
-            exit 1
-            ;;
-    esac
 else
     UPDATE_MODE="fresh"
 fi
 
 echo ""
 echo "Installing UDO v${VERSION} to: $(pwd)"
+echo -e "Mode: ${BLUE}${UPDATE_MODE}${NC}"
 echo ""
 
 # Create directory structure (safe - won't overwrite existing)
@@ -146,8 +163,8 @@ for dir in .agents/_archive .checkpoints .memory/canonical .memory/working .memo
     fi
 done
 
-# Update version in PROJECT_META.json if it exists
-if [ -f "PROJECT_META.json" ]; then
+# Update version in PROJECT_META.json if it exists and we're updating
+if [ "$UPDATE_MODE" = "update" ] && [ -f "PROJECT_META.json" ]; then
     if command -v sed &> /dev/null; then
         sed -i.bak 's/"udo_version"[[:space:]]*:[[:space:]]*"[^"]*"/"udo_version": "'"$VERSION"'"/' PROJECT_META.json 2>/dev/null && rm -f PROJECT_META.json.bak
     fi
