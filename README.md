@@ -1,6 +1,6 @@
 # UDO - Universal Dynamic Orchestrator
 
-**Version 4.5**
+**Version 4.5.2**
 
 A file-based system for AI project management with context continuity across sessions.
 
