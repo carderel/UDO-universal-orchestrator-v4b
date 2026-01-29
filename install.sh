@@ -45,6 +45,8 @@ while [[ $# -gt 0 ]]; do
             echo "  Fresh install:  curl -fsSL URL/install.sh | bash"
             echo "  Update:         curl -fsSL URL/install.sh | bash -s -- --update"
             echo "  Overwrite:      curl -fsSL URL/install.sh | bash -s -- --overwrite"
+            echo ""
+            echo "Note: Running on existing install without flags defaults to --update (safe)"
             exit 0
             ;;
         *)
@@ -79,25 +81,25 @@ if [ -f "ORCHESTRATOR.md" ] || [ -f "START_HERE.md" ]; then
     echo -e "  Latest version:    ${BLUE}${VERSION}${NC}"
     echo ""
     
-    # If no mode specified via command line, show instructions
+    # If no mode specified, default to update (safe option)
     if [ -z "$UPDATE_MODE" ]; then
-        echo -e "${RED}Cannot prompt interactively when piped.${NC}"
+        echo -e "${BLUE}Defaulting to update mode (preserves your project data).${NC}"
+        echo -e "Use --overwrite flag for full reinstall."
         echo ""
-        echo "Please run with one of these options:"
+        UPDATE_MODE="update"
+    fi
+    
+    # Confirm overwrite is intentional
+    if [ "$UPDATE_MODE" = "overwrite" ]; then
+        echo -e "${RED}WARNING: Overwrite mode will replace all UDO files.${NC}"
+        echo -e "Your project data (sessions, checkpoints, memory) will be preserved,"
+        echo -e "but configuration files will be reset to defaults."
         echo ""
-        echo -e "  ${YELLOW}To update (preserve project data):${NC}"
-        echo "  curl -fsSL $REPO_URL/install.sh | bash -s -- --update"
-        echo ""
-        echo -e "  ${YELLOW}To overwrite everything:${NC}"
-        echo "  curl -fsSL $REPO_URL/install.sh | bash -s -- --overwrite"
-        echo ""
-        exit 1
     fi
 else
     UPDATE_MODE="fresh"
 fi
 
-echo ""
 echo "Installing UDO v${VERSION} to: $(pwd)"
 echo -e "Mode: ${BLUE}${UPDATE_MODE}${NC}"
 echo ""
@@ -149,6 +151,7 @@ fi
 
 # Template files (always update)
 download_file ".templates/agent.md"
+download_file ".templates/reasoning-handoff.md"
 
 # Manifest only on fresh/overwrite
 if [ "$UPDATE_MODE" = "fresh" ] || [ "$UPDATE_MODE" = "overwrite" ]; then
