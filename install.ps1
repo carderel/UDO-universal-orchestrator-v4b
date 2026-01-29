@@ -86,7 +86,7 @@ foreach ($dir in $dirs) {
 }
 
 # Core files (always updated)
-$coreFiles = @("START_HERE.md", "ORCHESTRATOR.md", "COMMANDS.md", "OVERSIGHT_DASHBOARD.md", "HANDOFF_PROMPT.md")
+$coreFiles = @("START_HERE.md", "ORCHESTRATOR.md", "COMMANDS.md", "OVERSIGHT_DASHBOARD.md", "HANDOFF_PROMPT.md", "REASONING_CONTRACT.md", "DEVILS_ADVOCATE.md", "AUDIENCE_ANTICIPATION.md")
 
 # Config files (only on fresh/overwrite)
 $configFiles = @("HARD_STOPS.md", "LESSONS_LEARNED.md", "NON_GOALS.md", "PROJECT_STATE.json", "PROJECT_META.json", "CAPABILITIES.json")
