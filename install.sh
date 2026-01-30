@@ -12,6 +12,7 @@ RED='\033[0;31m'
 GREEN='\033[0;32m'
 YELLOW='\033[1;33m'
 BLUE='\033[0;34m'
+CYAN='\033[0;36m'
 NC='\033[0m'
 
 # Parse command line arguments
@@ -22,11 +23,11 @@ while [[ $# -gt 0 ]]; do
             UPDATE_MODE="update"
             shift
             ;;
-        --overwrite|-o)
-            UPDATE_MODE="overwrite"
+        --fresh|-f)
+            UPDATE_MODE="fresh"
             shift
             ;;
-        --force|-f)
+        --overwrite|-o)
             UPDATE_MODE="overwrite"
             shift
             ;;
@@ -37,16 +38,14 @@ while [[ $# -gt 0 ]]; do
             echo ""
             echo "Options:"
             echo "  --update, -u     Update core files only (preserves project data)"
-            echo "  --overwrite, -o  Full overwrite (replaces everything)"
-            echo "  --force, -f      Same as --overwrite"
+            echo "  --fresh, -f      Fresh install (removes existing UDO data)"
+            echo "  --overwrite, -o  Same as --fresh"
             echo "  --help, -h       Show this help message"
             echo ""
             echo "Examples:"
-            echo "  Fresh install:  curl -fsSL URL/install.sh | bash"
-            echo "  Update:         curl -fsSL URL/install.sh | bash -s -- --update"
-            echo "  Overwrite:      curl -fsSL URL/install.sh | bash -s -- --overwrite"
-            echo ""
-            echo "Note: Running on existing install without flags defaults to --update (safe)"
+            echo "  Fresh install:   curl -fsSL URL/install.sh | bash"
+            echo "  Update:          curl -fsSL URL/install.sh | bash -s -- --update"
+            echo "  Fresh reinstall: curl -fsSL URL/install.sh | bash -s -- --fresh"
             exit 0
             ;;
         *)
@@ -55,7 +54,7 @@ while [[ $# -gt 0 ]]; do
     esac
 done
 
-echo -e "${GREEN}"
+echo -e "${CYAN}"
 echo "╔════════════════════════════════════════════════════════════╗"
 echo "║         UDO - Universal Dynamic Orchestrator v${VERSION}         ║"
 echo "║              AI Project Management System                  ║"
@@ -64,7 +63,9 @@ echo -e "${NC}"
 
 # Function to get installed version
 get_installed_version() {
-    if [ -f "PROJECT_META.json" ]; then
+    if [ -f ".udo-version" ]; then
+        cat .udo-version 2>/dev/null || echo "unknown"
+    elif [ -f "PROJECT_META.json" ]; then
         grep -o '"udo_version"[[:space:]]*:[[:space:]]*"[^"]*"' PROJECT_META.json 2>/dev/null | grep -o '[0-9]\+\.[0-9]\+' || echo "unknown"
     else
         echo "unknown"
@@ -81,30 +82,56 @@ if [ -f "ORCHESTRATOR.md" ] || [ -f "START_HERE.md" ]; then
     echo -e "  Latest version:    ${BLUE}${VERSION}${NC}"
     echo ""
     
-    # If no mode specified, default to update (safe option)
-    if [ -z "$UPDATE_MODE" ]; then
-        echo -e "${BLUE}Defaulting to update mode (preserves your project data).${NC}"
-        echo -e "Use --overwrite flag for full reinstall."
+    # Check if update available
+    if [ "$INSTALLED_VERSION" != "$VERSION" ]; then
+        echo -e "${GREEN}Update available!${NC}"
         echo ""
-        UPDATE_MODE="update"
     fi
     
-    # Confirm overwrite is intentional
-    if [ "$UPDATE_MODE" = "overwrite" ]; then
-        echo -e "${RED}WARNING: Overwrite mode will replace all UDO files.${NC}"
-        echo -e "Your project data (sessions, checkpoints, memory) will be preserved,"
-        echo -e "but configuration files will be reset to defaults."
+    # If no mode specified via command line, show menu
+    if [ -z "$UPDATE_MODE" ]; then
+        echo "What would you like to do?"
         echo ""
+        echo "  1) Update - Refresh system files, keep your data"
+        echo "  2) Fresh install - Start over (removes UDO project data)"
+        echo "  3) Skip this time"
+        echo ""
+        echo -e "${YELLOW}Since this is running via pipe, select an option:${NC}"
+        echo ""
+        echo "  To update (recommended):"
+        echo "    curl -fsSL $REPO_URL/install.sh | bash -s -- --update"
+        echo ""
+        echo "  To fresh install:"
+        echo "    curl -fsSL $REPO_URL/install.sh | bash -s -- --fresh"
+        echo ""
+        echo "  To skip: just don't run the command again"
+        echo ""
+        exit 0
+    fi
+    
+    # Handle fresh install - remove existing UDO files
+    if [ "$UPDATE_MODE" = "fresh" ] || [ "$UPDATE_MODE" = "overwrite" ]; then
+        echo -e "${RED}Removing existing UDO installation...${NC}"
+        rm -rf .agents .templates .project-catalog .inputs .outputs .checkpoints .rules .memory .tools
+        rm -f ORCHESTRATOR.md PROJECT_STATE.json PROJECT_META.json CAPABILITIES.json
+        rm -f HARD_STOPS.md LESSONS_LEARNED.md NON_GOALS.md OVERSIGHT_DASHBOARD.md
+        rm -f START_HERE.md HANDOFF_PROMPT.md COMMANDS.md .udo-version
+        rm -f REASONING_CONTRACT.md DEVILS_ADVOCATE.md AUDIENCE_ANTICIPATION.md TOOLS_REGISTRY.md
+        UPDATE_MODE="fresh"
     fi
 else
-    UPDATE_MODE="fresh"
+    # No existing installation
+    if [ -z "$UPDATE_MODE" ]; then
+        UPDATE_MODE="fresh"
+    fi
 fi
 
+echo ""
 echo "Installing UDO v${VERSION} to: $(pwd)"
 echo -e "Mode: ${BLUE}${UPDATE_MODE}${NC}"
 echo ""
 
-# Create directory structure (safe - won't overwrite existing)
+# Create directory structure
 echo "Creating directory structure..."
 mkdir -p .agents/_archive
 mkdir -p .checkpoints
@@ -128,10 +155,20 @@ download_file() {
     fi
 }
 
+# Download only if missing (for config files during update)
+download_if_missing() {
+    local file=$1
+    if [ ! -f "$file" ]; then
+        download_file "$file"
+    else
+        echo -e "  ${BLUE}Kept existing:${NC} $file"
+    fi
+}
+
 # Core system files (always updated)
 CORE_FILES="START_HERE.md ORCHESTRATOR.md COMMANDS.md OVERSIGHT_DASHBOARD.md HANDOFF_PROMPT.md REASONING_CONTRACT.md DEVILS_ADVOCATE.md AUDIENCE_ANTICIPATION.md TOOLS_REGISTRY.md"
 
-# Config files (only on fresh install or overwrite)
+# Config files (only on fresh install)
 CONFIG_FILES="HARD_STOPS.md LESSONS_LEARNED.md NON_GOALS.md PROJECT_STATE.json PROJECT_META.json CAPABILITIES.json"
 
 # Download core files
@@ -141,13 +178,16 @@ for file in $CORE_FILES; do
 done
 
 # Download config files based on mode
-if [ "$UPDATE_MODE" = "fresh" ] || [ "$UPDATE_MODE" = "overwrite" ]; then
+if [ "$UPDATE_MODE" = "fresh" ]; then
     echo "Downloading configuration files..."
     for file in $CONFIG_FILES; do
         download_file "$file"
     done
 else
-    echo -e "${BLUE}Preserving existing configuration files.${NC}"
+    echo "Preserving existing configuration files..."
+    for file in $CONFIG_FILES; do
+        download_if_missing "$file"
+    done
 fi
 
 # Template files (always update)
@@ -155,7 +195,7 @@ echo "Downloading templates..."
 download_file ".templates/agent.md"
 download_file ".templates/reasoning-handoff.md"
 
-# Tool system files (always update adapters and templates)
+# Tool system files (always update)
 echo "Downloading tool system files..."
 download_file ".tools/adapters/search.md"
 download_file ".tools/adapters/storage.md"
@@ -164,12 +204,14 @@ download_file ".tools/adapters/communication.md"
 download_file ".tools/adapters/execution.md"
 download_file ".tools/templates/tool-config.md"
 
-# Manifest only on fresh/overwrite
-if [ "$UPDATE_MODE" = "fresh" ] || [ "$UPDATE_MODE" = "overwrite" ]; then
+# Manifest only on fresh
+if [ "$UPDATE_MODE" = "fresh" ]; then
     download_file ".inputs/manifest.json"
+else
+    download_if_missing ".inputs/manifest.json"
 fi
 
-# Create .gitkeep files (safe - only if don't exist)
+# Create .gitkeep files
 echo "Ensuring directory placeholders..."
 for dir in .agents/_archive .checkpoints .memory/canonical .memory/working .memory/disposable .outputs/_drafts .project-catalog/sessions .project-catalog/decisions .project-catalog/agents .project-catalog/errors .project-catalog/handoffs .project-catalog/archive .rules .tools/installed; do
     if [ ! -f "$dir/.gitkeep" ]; then
@@ -177,8 +219,11 @@ for dir in .agents/_archive .checkpoints .memory/canonical .memory/working .memo
     fi
 done
 
-# Update version in PROJECT_META.json if it exists and we're updating
-if [ "$UPDATE_MODE" = "update" ] && [ -f "PROJECT_META.json" ]; then
+# Save version file
+echo "$VERSION" > .udo-version
+
+# Update version in PROJECT_META.json if it exists
+if [ -f "PROJECT_META.json" ]; then
     if command -v sed &> /dev/null; then
         sed -i.bak 's/"udo_version"[[:space:]]*:[[:space:]]*"[^"]*"/"udo_version": "'"$VERSION"'"/' PROJECT_META.json 2>/dev/null && rm -f PROJECT_META.json.bak
     fi
@@ -187,11 +232,9 @@ fi
 echo ""
 if [ "$UPDATE_MODE" = "fresh" ]; then
     echo -e "${GREEN}✓ UDO v${VERSION} installed successfully!${NC}"
-elif [ "$UPDATE_MODE" = "update" ]; then
+else
     echo -e "${GREEN}✓ UDO updated to v${VERSION}!${NC}"
     echo -e "${BLUE}  Your project data and configuration were preserved.${NC}"
-else
-    echo -e "${GREEN}✓ UDO v${VERSION} installed (full overwrite).${NC}"
 fi
 
 echo ""
