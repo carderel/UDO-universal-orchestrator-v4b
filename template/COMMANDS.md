@@ -185,3 +185,30 @@ Structured critique with severity ratings (High/Medium/Low) and questions for us
 Option 2 always includes Option 1. Specific audiences are additive.
 
 **Full protocol:** See `AUDIENCE_ANTICIPATION.md`
+
+---
+
+## Tools & Integrations
+
+| Command | What It Does |
+|---------|--------------|
+| `List tools` | Show all registered tools and their status |
+| `Tool status` | Quick summary of available tools |
+| `Check tool health` | Verify all active tools are working |
+| `Verify [tool-name]` | Check specific tool status |
+| `Add tool [name]` | Walk through adding a new tool |
+| `Describe tool [name]` | Show tool capabilities and usage |
+
+### Tool Adapters
+
+Tools are categorized by what they do:
+
+| Adapter | Purpose |
+|---------|---------|
+| search | Find information (web, docs, code) |
+| storage | Store/retrieve files (Drive, S3, local) |
+| data | Query structured data (APIs, databases) |
+| communication | Send messages (Slack, email) |
+| execution | Run code (Python, Node, bash) |
+
+**Full documentation:** See `TOOLS_REGISTRY.md` and `.tools/adapters/`

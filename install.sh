@@ -115,6 +115,7 @@ mkdir -p .project-catalog/sessions .project-catalog/decisions .project-catalog/a
 mkdir -p .project-catalog/errors .project-catalog/handoffs .project-catalog/archive
 mkdir -p .rules
 mkdir -p .templates
+mkdir -p .tools/adapters .tools/installed .tools/templates
 
 # Download function
 download_file() {
@@ -128,7 +129,7 @@ download_file() {
 }
 
 # Core system files (always updated)
-CORE_FILES="START_HERE.md ORCHESTRATOR.md COMMANDS.md OVERSIGHT_DASHBOARD.md HANDOFF_PROMPT.md REASONING_CONTRACT.md DEVILS_ADVOCATE.md AUDIENCE_ANTICIPATION.md"
+CORE_FILES="START_HERE.md ORCHESTRATOR.md COMMANDS.md OVERSIGHT_DASHBOARD.md HANDOFF_PROMPT.md REASONING_CONTRACT.md DEVILS_ADVOCATE.md AUDIENCE_ANTICIPATION.md TOOLS_REGISTRY.md"
 
 # Config files (only on fresh install or overwrite)
 CONFIG_FILES="HARD_STOPS.md LESSONS_LEARNED.md NON_GOALS.md PROJECT_STATE.json PROJECT_META.json CAPABILITIES.json"
@@ -150,8 +151,18 @@ else
 fi
 
 # Template files (always update)
+echo "Downloading templates..."
 download_file ".templates/agent.md"
 download_file ".templates/reasoning-handoff.md"
+
+# Tool system files (always update adapters and templates)
+echo "Downloading tool system files..."
+download_file ".tools/adapters/search.md"
+download_file ".tools/adapters/storage.md"
+download_file ".tools/adapters/data.md"
+download_file ".tools/adapters/communication.md"
+download_file ".tools/adapters/execution.md"
+download_file ".tools/templates/tool-config.md"
 
 # Manifest only on fresh/overwrite
 if [ "$UPDATE_MODE" = "fresh" ] || [ "$UPDATE_MODE" = "overwrite" ]; then
@@ -160,7 +171,7 @@ fi
 
 # Create .gitkeep files (safe - only if don't exist)
 echo "Ensuring directory placeholders..."
-for dir in .agents/_archive .checkpoints .memory/canonical .memory/working .memory/disposable .outputs/_drafts .project-catalog/sessions .project-catalog/decisions .project-catalog/agents .project-catalog/errors .project-catalog/handoffs .project-catalog/archive .rules; do
+for dir in .agents/_archive .checkpoints .memory/canonical .memory/working .memory/disposable .outputs/_drafts .project-catalog/sessions .project-catalog/decisions .project-catalog/agents .project-catalog/errors .project-catalog/handoffs .project-catalog/archive .rules .tools/installed; do
     if [ ! -f "$dir/.gitkeep" ]; then
         echo "# This file preserves the directory in git" > "$dir/.gitkeep"
     fi

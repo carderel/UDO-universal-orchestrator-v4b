@@ -462,3 +462,61 @@ Audience Anticipation        ← "Will this satisfy them?"
        ↓
 User Decision                ← Approve / Revise / Investigate
 ```
+
+---
+
+## TOOLS & INTEGRATIONS
+
+UDO uses a modular tool system. Tools are categorized by adapters (what they do) and registered in a central index.
+
+### Tool Structure
+
+```
+.tools/
+├── TOOLS_REGISTRY.md      # Master index of all tools
+├── adapters/              # Capability type definitions
+│   ├── search.md          # Finding information
+│   ├── storage.md         # Files and documents
+│   ├── data.md            # Structured data queries
+│   ├── communication.md   # Messaging and notifications
+│   └── execution.md       # Running code
+├── installed/             # Tool-specific configurations
+│   └── [tool-name].md
+└── templates/
+    └── tool-config.md     # Template for new tools
+```
+
+### At Session Start
+
+1. Read `TOOLS_REGISTRY.md` to know what's available
+2. Note any tools needing attention (stale, deprecated)
+3. Include tool status in oversight report if relevant
+
+### Using Tools
+
+1. Check TOOLS_REGISTRY.md for availability
+2. Read tool config in `.tools/installed/[tool].md` for usage
+3. Follow adapter pattern for that tool type
+4. Handle errors per tool's error handling section
+5. Use fallback if tool unavailable
+
+### Commands
+
+| Command | What It Does |
+|---------|--------------|
+| `List tools` | Show available tools |
+| `Check tool health` | Verify all active tools |
+| `Verify [tool]` | Check specific tool status |
+| `Add tool [name]` | Walk through adding new tool |
+| `Tool status` | Quick availability summary |
+
+### Adding New Tools
+
+1. Identify adapter type (search/storage/data/communication/execution)
+2. Copy template from `.tools/templates/tool-config.md`
+3. Fill in tool-specific details
+4. Add to TOOLS_REGISTRY.md
+5. Test and verify
+6. Update status to ✅ Active
+
+**Full documentation:** See `TOOLS_REGISTRY.md`
