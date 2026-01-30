@@ -1,0 +1,17 @@
+{
+  "audit_scope": {
+    "depth": "standard",
+    "include_paths": [],
+    "exclude_paths": [
+      "node_modules",
+      ".git",
+      "dist",
+      "build",
+      "__pycache__",
+      ".venv",
+      "vendor"
+    ]
+  },
+  "focus_areas": [],
+  "skip_areas": []
+}
