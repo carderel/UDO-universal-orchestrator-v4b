@@ -1,132 +1,167 @@
-# UDO - Universal Dynamic Orchestrator
+UDO - Universal Dynamic Orchestrator
 
-**Version 4.5**
+Version 4.6
 
-A file-based system for AI project management with context continuity across sessions.
+A file based system for AI project management with context continuity across sessions.
 
-**Works with any LLM** - Switch between Claude, GPT, Gemini, or any AI mid-project without losing context.
+Works with any LLM. Claude, GPT, Gemini, or others can be swapped mid project without losing state, rules, or history.
 
----
+--------------------------------
+INSTALLATION
+--------------------------------
 
-## Installation
-
-### Option 1: One-Line Install (Recommended)
+Option 1: One line install (recommended)
 
 Navigate to your project folder first, then run:
 
-#### Mac / Linux / WSL / Git Bash
-```bash
+Mac Linux WSL Git Bash
 curl -fsSL https://raw.githubusercontent.com/carderel/UDO-universal-orchestrator-v4b/main/install.sh | bash
-```
 
-#### Windows PowerShell
-```powershell
+Windows PowerShell
 irm https://raw.githubusercontent.com/carderel/UDO-universal-orchestrator-v4b/main/install.ps1 | iex
-```
 
-### Option 2: Manual Setup
+Option 2: Manual setup
 
 1. Download or clone this repository
-2. Copy the contents of the `template/` folder to your project directory
-3. Configure your AI (see Quick Start below)
+2. Copy the contents of the template folder to your project directory
+3. Configure your AI as described below
 
----
+--------------------------------
+QUICK START
+--------------------------------
 
-## Quick Start
+Step 1. Install UDO using one of the methods above
 
-### 1. Install UDO (see above)
+Step 2. Configure your AI
 
-### 2. Configure Your AI
+Add the following instruction to your AI system prompt or custom instructions:
 
-Add this to your AI's system prompt or custom instructions:
+Before responding to any request, read START_HERE.md and follow its instructions exactly.
 
-```
-Before responding to any request, read the project's START_HERE.md and follow its instructions.
-```
+Step 3. Begin work
 
-### 3. Start Working
-
-The AI will:
+The AI must:
 - Read START_HERE.md
-- Read ORCHESTRATOR.md (mandatory)
-- Follow UDO protocol automatically
+- Read ORCHESTRATOR.md in full
+- Adopt UDO protocol before performing any task
 
----
+--------------------------------
+WHAT UDO DOES
+--------------------------------
 
-## What UDO Does
+UDO provides enforced structure for long running AI assisted projects.
 
-- **Session Continuity**: Logs every session so the next AI can pick up where you left off
-- **Checkpoints**: Auto-saves progress every 3 tasks
-- **Memory System**: Organizes discovered facts (canonical/working/disposable)
-- **Agent Management**: Creates specialist agents when tasks need 2+ personas
-- **Decision Logging**: Documents major choices with rationale
-- **Compliance Tracking**: Ensures protocol is followed
+Core capabilities:
 
----
+- Session continuity
+  Every session is logged so work can resume without loss of context
 
-## Key Commands
+- Checkpoints
+  Automatic save points after every 3 completed todos and at phase boundaries
 
-| Command | What It Does |
-|---------|--------------|
-| `Resume` or `r` | Start session with oversight report |
-| `Deep resume` or `dr` | Full context with last 3 sessions |
-| `Handoff` or `h` | End session with proper logging |
-| `Quick handoff` or `qh` | Minimal session log |
-| `Status` or `s` | Get current project status |
-| `Checkpoint this` or `cp` | Manual save point |
-| `Backfill sessions` or `bf` | Recover missing session logs |
-| `Compliance check` or `cc` | Verify protocol is being followed |
+- Memory system
+  Facts and discoveries are stored explicitly as canonical, working, or disposable
 
----
+- Agent management
+  Specialized agents are created when work requires 2 or more distinct personas or competencies
 
-## Project Structure
+- Decision logging
+  Major architectural or strategic decisions are recorded with rationale
 
-```
+- Compliance tracking
+  Built in checks surface protocol violations instead of silently ignoring them
+
+--------------------------------
+KEY COMMANDS
+--------------------------------
+
+Resume or r
+Start a session with an oversight report
+
+Deep resume or dr
+Load full context including recent sessions
+
+Handoff or h
+End session with mandatory logging and checkpoint
+
+Quick handoff or qh
+Minimal session log and state update
+
+Status or s
+Report current goal, phase, todos, blockers, and compliance gaps
+
+Checkpoint this or cp
+Force an immediate checkpoint
+
+Backfill sessions or bf
+Reconstruct missing session logs
+
+Compliance check or cc
+Report compliance gaps only. Does not auto fix.
+
+--------------------------------
+PROJECT STRUCTURE
+--------------------------------
+
 your-project/
-├── START_HERE.md           # Entry point (AI reads first)
-├── ORCHESTRATOR.md         # Operating instructions
-├── COMMANDS.md             # Command reference
-├── HARD_STOPS.md           # Absolute rules
-├── LESSONS_LEARNED.md      # Situational lessons
-├── PROJECT_STATE.json      # Current status
-├── PROJECT_META.json       # Project metadata
-├── CAPABILITIES.json       # AI environment capabilities
-├── .agents/                # Specialist AI definitions
-├── .checkpoints/           # Saved snapshots
-├── .memory/                # Organized facts
-├── .outputs/               # Deliverables
-├── .project-catalog/       # Full history
-├── .rules/                 # Quality standards
-└── .templates/             # File templates
-```
+START_HERE.md            Entry point. Always read first
+ORCHESTRATOR.md          Core operating rules
+COMMANDS.md              Command reference
+HARD_STOPS.md            Absolute prohibitions
+LESSONS_LEARNED.md       Situational corrections
+PROJECT_STATE.json       Current status and todos
+PROJECT_META.json        Project metadata
+CAPABILITIES.json        AI environment capabilities
+.agents/                 Specialist agent definitions
+.checkpoints/            Saved snapshots
+.memory/                 Canonical working and disposable facts
+.outputs/                Final deliverables
+.project-catalog/        Session logs and decisions
+.rules/                  Quality and process standards
+.templates/              File templates
 
----
+--------------------------------
+PROTOCOL ENFORCEMENT
+--------------------------------
 
-## Protocol Enforcement
+UDO halts work when these conditions occur:
 
-UDO v4.5 includes circuit breakers that halt work if:
+- 5 or more todos completed without a session log
+- 5 or more todos completed without a checkpoint
+- Task requires 2 or more personas and no agents exist
+- Same task fails 3 times
+- Context usage exceeds 80 percent
 
-- **5+ todos without session log** → Halts until backfilled
-- **5+ todos without checkpoint** → Forces checkpoint
-- **2+ personas needed** → Requires agent creation
-- **Same task fails 3x** → Escalates to human
-- **Context > 80%** → Forces archival
+Halting is intentional. It forces correction before damage accumulates.
 
----
+--------------------------------
+REPOSITORY STRUCTURE
+--------------------------------
 
-## Repository Structure
-
-```
 UDO-universal-orchestrator-v4b/
-├── install.sh              # Bash installer
-├── install.ps1             # PowerShell installer
-├── README.md               # This file
-├── LICENSE
-└── template/               # Files copied to your project
-```
+install.sh        Bash installer
+install.ps1       PowerShell installer
+README.md         This file
+LICENSE
+template/         Files copied into your project
 
----
+--------------------------------
+LICENSE
+--------------------------------
 
-## License
+MIT License
+Use freely. Modify as needed.
 
-MIT - Use freely, modify as needed.
+--------------------------------
+NOTES ON SCOPE
+--------------------------------
+
+This file describes WHAT UDO is and HOW to start.
+It does not define how to think, how to analyze, or how to write.
+
+Those responsibilities are defined in:
+- ORCHESTRATOR.md
+- REASONING_CONTRACT.md
+- HARD_STOPS.md
+
+END OF FILE

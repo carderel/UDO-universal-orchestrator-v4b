@@ -1,17 +1,23 @@
 {
   "audit_scope": {
     "depth": "standard",
-    "include_paths": [],
+    "max_files": 500,
+    "time_budget": "2h",
+    "focus_areas": [],
     "exclude_paths": [
       "node_modules",
+      "vendor",
       ".git",
       "dist",
       "build",
       "__pycache__",
-      ".venv",
-      "vendor"
+      ".next",
+      "coverage"
     ]
   },
-  "focus_areas": [],
-  "skip_areas": []
+  "success_criteria": "",
+  "sensitive_handling": {
+    "redact_secrets": true,
+    "flag_pii": true
+  }
 }

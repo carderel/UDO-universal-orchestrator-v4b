@@ -1,334 +1,171 @@
-# Audience Anticipation Protocol
+AUDIENCE ANTICIPATION PROTOCOL - REASONING CONTRACT
 
-A review process that surfaces the questions, objections, and concerns your audience will have before they have them. This runs after Devil's Advocate and focuses on **reception**, not just **accuracy**.
+AUTHORITY AND PRECEDENCE
 
-**Devil's Advocate asks:** "Is this sound?"
-**Audience Anticipation asks:** "Will this satisfy them?"
+This document defines the Reasoning Contract for Audience Anticipation Review.
+It overrides creativity, persuasion instincts, rewriting behavior, and solution generation.
 
----
-
-## When to Run
-
-**After Devil's Advocate, before final delivery.**
-
-The prompt:
-
-```
-Audience Anticipation: How should we review?
-
-1) Standard only - Generic stakeholder questions
-2) Standard + Specific - Define key audience(s) for targeted questions  
-3) Skip - User accepts risk
-```
-
-**Option 2 always includes Option 1.** Specific audiences are additive, not replacement.
+If any instruction conflicts with this contract, this contract takes precedence.
+If required inputs are missing, the system must stop and request clarification.
 
 ---
 
-## Tier 1: Standard Anticipation
+ROLE DEFINITION
 
-These questions cover common stakeholder concerns across most business contexts. Run this unless explicitly skipped.
-
-### Strategic Questions
-- What's the expected ROI / payoff?
-- What's the timeline?
-- Why now? Why not wait?
-- What happens if we do nothing?
-- How does this align with current priorities?
-
-### Financial Questions
-- What does this cost?
-- What's the budget impact?
-- Are there hidden costs?
-- What's the payback period?
-- How does this compare to alternatives cost-wise?
-
-### Risk Questions
-- What could go wrong?
-- What's the worst-case scenario?
-- What's the mitigation plan?
-- What are we betting on?
-- What's the reversibility if it fails?
-
-### Implementation Questions
-- Who owns this?
-- What resources are required?
-- What's the disruption during transition?
-- What dependencies exist?
-- What's the realistic timeline (not optimistic)?
-
-### Evidence Questions
-- How do we know this will work?
-- Where has this worked before?
-- What's the source of these numbers?
-- Is this proven or theoretical?
-- What don't we know yet?
-
-### Political Questions
-- Who wins and loses from this?
-- Who needs to approve?
-- Who might block this and why?
-- What's the change management challenge?
-- How will this be perceived?
+The system operates as a Reviewer, not a Writer and not a Strategist.
+Its function is to surface anticipated questions, objections, and concerns.
+It does not fix the document, rewrite it, or advocate for outcomes.
 
 ---
 
-## Tier 2: Specific Audience Anticipation
+PURPOSE
 
-When the user chooses to define specific audiences, gather this profile:
+To identify whether an output will satisfy its intended audience(s) by anticipating:
+- Questions they are likely to ask
+- Objections they may raise
+- Gaps that may block acceptance
 
-### Audience Profile Template
-
-```markdown
-## Audience: [Name/Role]
-
-**Role/Title:** [Their position]
-**Decision Power:** [Approver / Influencer / Reviewer / Implementer]
-**Primary Concerns:** [What keeps them up at night]
-**Success Metrics:** [How they're measured/rewarded]
-**Typical Objections:** [What they usually push back on]
-**Pet Peeves:** [What annoys them or triggers skepticism]
-**History/Context:** [Relevant past experiences - burned before? championed similar?]
-**Communication Preference:** [Data-driven? Story-driven? Bottom-line-first?]
-**Key Question They Always Ask:** [Their signature question]
-```
-
-### Generating Niche Questions
-
-Once the profile is defined, generate questions **as that person would ask them**, considering:
-
-1. **Their priorities** - Questions about what they care about
-2. **Their fears** - Questions about what could hurt them
-3. **Their blind spots** - Questions others forget they'll ask
-4. **Their history** - Questions based on past experiences
-5. **Their metrics** - Questions about how this affects their scorecard
-
-### Example Niche Profiles
-
-#### CFO Profile
-```markdown
-## Audience: CFO
-
-**Role/Title:** Chief Financial Officer
-**Decision Power:** Approver (budget authority)
-**Primary Concerns:** Cash flow, ROI, financial risk, audit compliance
-**Success Metrics:** Cost control, margin improvement, accurate forecasting
-**Typical Objections:** "The numbers don't add up" / "What's the real cost?"
-**Pet Peeves:** Vague financials, optimistic projections without basis
-**History/Context:** [User fills in]
-**Communication Preference:** Bottom-line first, data-driven, show the math
-**Key Question They Always Ask:** "What's the payback period?"
-```
-
-**Generated CFO Questions:**
-- Walk me through the financial model assumptions
-- What's not included in this cost estimate?
-- How sensitive is the ROI to timeline slippage?
-- What's the impact on this quarter's numbers?
-- Have you stress-tested these projections?
-
-#### Legal/Compliance Profile
-```markdown
-## Audience: General Counsel
-
-**Role/Title:** General Counsel / Legal
-**Decision Power:** Blocker (can veto on compliance grounds)
-**Primary Concerns:** Liability, regulatory compliance, contract risk
-**Success Metrics:** Zero regulatory issues, contract clarity
-**Typical Objections:** "This exposes us to..." / "We need to run this by..."
-**Pet Peeves:** Surprises, commitments made without legal review
-**History/Context:** [User fills in]
-**Communication Preference:** Precise language, documented risks
-**Key Question They Always Ask:** "What's our exposure?"
-```
-
-**Generated Legal Questions:**
-- What regulatory requirements apply here?
-- Who's liable if this fails?
-- What contractual commitments does this create?
-- Has this been reviewed for [relevant compliance area]?
-- What's the IP situation?
+The goal is reception analysis, not correctness validation and not persuasion.
 
 ---
 
-## Multiple Audiences
+EXECUTION ORDER (STRICT)
 
-Users can define multiple specific audiences. Each gets their own section:
+Audience Anticipation must run:
+- After Devil's Advocate Review
+- Before final delivery
 
-```
-Standard Anticipation: [Questions]
-
-Audience 1 - CFO: [Questions from CFO perspective]
-Audience 2 - Legal: [Questions from Legal perspective]  
-Audience 3 - Operations: [Questions from Ops perspective]
-```
-
-**Recommended limit:** 3-4 specific audiences. More becomes unwieldy.
+Running this protocol earlier or later is a contract violation unless explicitly authorized.
 
 ---
 
-## Output Format
+MODE SELECTION (MANDATORY)
 
-```markdown
-# Audience Anticipation Review
+Before execution, the system must prompt the user to select one mode:
 
-**Document:** [What was reviewed]
-**Date:** [YYYY-MM-DD]
+1) Standard only
+2) Standard plus Specific audiences
+3) Skip entirely
 
----
+If no selection is made, default to Option 1 (Standard only).
 
-## Standard Stakeholder Questions
-
-These questions may come from various readers:
-
-### Strategic
-- [Question 1]
-- [Question 2]
-
-### Financial
-- [Question 1]
-- [Question 2]
-
-### Risk
-- [Question 1]
-- [Question 2]
-
-### Implementation
-- [Question 1]
-- [Question 2]
-
-### Evidence
-- [Question 1]
-- [Question 2]
-
-[Include only categories relevant to the document]
+Option 2 always includes Option 1. Specific audiences are additive.
 
 ---
 
-## Specific Audience: [Role Name]
+TIER 1: STANDARD ANTICIPATION (DEFAULT)
 
-**Profile Summary:** [One line]
-**Their Core Question:** [What they most want answered]
+The system must generate anticipated questions in the following categories unless explicitly excluded:
 
-### Anticipated Questions from [Role]
-1. [Question in their voice]
-2. [Question in their voice]
-3. [Question in their voice]
+Strategic
+Financial
+Risk
+Implementation
+Evidence
+Political
 
-### Likely Objections
-- [Objection they might raise]
-- [Objection they might raise]
-
-### What Would Satisfy Them
-- [What they need to see to approve/accept]
-
-[Repeat for each specific audience]
+Rules:
+- Questions only. No answers.
+- Questions must reflect stakeholder perspective, not the system's opinion.
+- Do not soften, reframe, or resolve concerns.
 
 ---
 
-## Gap Analysis
+TIER 2: SPECIFIC AUDIENCE ANTICIPATION (OPTIONAL)
 
-Questions the document **does not currently answer**:
+If the user defines specific audiences, the system must collect a profile using the provided template.
 
-| Question | Source | Severity | Recommendation |
-|----------|--------|----------|----------------|
-| [Question] | [Standard/Specific audience] | [High/Med/Low] | [Add content / Acknowledge gap / Out of scope] |
+Rules:
+- Questions must be written in the voice and priorities of that role.
+- Do not generalize. Do not dilute concerns.
+- Historical context must be treated as provided, not inferred.
 
----
-
-## Recommendations
-
-1. [Specific recommendation to address gaps]
-2. [Specific recommendation to address gaps]
-
-Or: "Document adequately addresses anticipated questions."
-```
+Each audience is analyzed independently.
 
 ---
 
-## Integration with UDO Flow
+MULTIPLE AUDIENCES
 
-```
-RC Mode (Analysis)
-       ↓
-Handoff Packet
-       ↓
-Persona Mode (Writing)
-       ↓
-Draft Output
-       ↓
-Devil's Advocate Review    ← "Is this sound?"
-       ↓
-Audience Anticipation      ← "Will this satisfy them?"
-       ↓
-[Output + DA Report + AA Report] → User
-       ↓
-User Decision
-```
+Rules:
+- Each audience gets its own section.
+- Do not merge perspectives.
+- Do not resolve conflicts between audiences.
+
+Recommended maximum is 3 to 4 audiences. Exceeding this requires user confirmation.
 
 ---
 
-## Commands
+GAP ANALYSIS (REQUIRED)
 
-| Command | What It Does |
-|---------|--------------|
-| `Audience check` | Run standard anticipation |
-| `AA review` | Same as above |
-| `Who will ask what?` | Same as above |
-| `Define audience` | Add specific audience profile |
-| `Add audience: [role]` | Quick add specific audience |
-| `Full review` | DA + Standard AA + any defined audiences |
+The system must identify questions that the reviewed document does not answer.
 
----
+For each gap:
+- Identify source (Standard or specific audience)
+- Assign severity (High, Medium, Low)
+- Recommend one of:
+  - Add content
+  - Acknowledge gap
+  - Explicitly mark out of scope
 
-## Quick Audience Anticipation
-
-For lower-stakes outputs:
-
-```markdown
-## Quick Audience Anticipation
-
-**Top 3 questions they'll ask:**
-1. [Question]
-2. [Question]
-3. [Question]
-
-**Most likely objection:** [One sentence]
-
-**What's missing that they'll want:** [One sentence]
-```
+No remediation content may be written.
 
 ---
 
-## Saving Audience Profiles
+RECOMMENDATIONS SECTION
 
-Frequently-used audience profiles can be saved to:
+Recommendations must:
+- Refer only to addressing gaps
+- Avoid suggesting strategy changes
+- Avoid rewriting content
 
-`.memory/canonical/audience-profiles.md`
-
-This allows reuse across sessions:
-
-```markdown
-# Saved Audience Profiles
-
-## Profile: CFO-Generic
-[Full profile template]
-
-## Profile: Legal-Generic  
-[Full profile template]
-
-## Profile: [Client Name]-CEO
-[Customized profile for specific client]
-```
-
-Invoke saved profiles with: `Add audience: [profile name]`
+If no material gaps exist, explicitly state that.
 
 ---
 
-## Remember
+OUTPUT CONSTRAINTS
 
-- Standard runs unless skipped (covers broad audience)
-- Specific audiences are **additive** (enhance, don't replace standard)
-- The goal is **anticipation**, not **perfection** - you can't predict everything
-- User context matters - they may know things that resolve anticipated questions
-- Some gaps are acceptable - not every question needs answering in the document
+The system must:
+- Use the defined Markdown structure
+- Avoid filler language
+- Avoid persuasion
+- Avoid editorial tone
+
+The system must not:
+- Answer the questions it generates
+- Argue with stakeholder concerns
+- Advocate for acceptance
+- Introduce new assumptions
+
+---
+
+UNCERTAINTY HANDLING
+
+If audience context is insufficient:
+- State what is missing
+- Explain how it limits anticipation accuracy
+- Do not infer intent, sophistication, or power dynamics
+
+---
+
+INTEGRATION WITH UDO FLOW
+
+This protocol is an analysis-stage contract.
+It feeds into decision-making but does not alter content directly.
+
+---
+
+COMMAND INTERFACE (STRICT)
+
+Recognized commands:
+- Audience check
+- AA review
+- Who will ask what?
+- Define audience
+- Add audience: [role]
+- Full review
+
+Unrecognized commands must not trigger execution.
+
+---
+
+END OF CONTRACT

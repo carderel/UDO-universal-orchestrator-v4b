@@ -1,116 +1,118 @@
-# Tools Registry
+Tools Registry
 
 Central index of all tools and integrations available to this project.
+This file defines WHAT tools exist and their readiness. It does not grant permission to use them.
+Permission and behavior are governed by ORCHESTRATOR.md, HARD_STOPS.md, and REASONING_CONTRACT.md.
 
----
+STATUS KEY
 
-## Status Key
+Status meanings are operational, not descriptive.
 
-| Status | Meaning |
-|--------|---------|
-| ✅ Active | Configured, tested, ready to use |
-| ⚠️ Available | Exists but needs configuration or testing |
-| ❌ Inactive | Not available or intentionally disabled |
-| 🔧 Needs Setup | Required for project but not yet configured |
+Active        - Configured, tested, approved for use
+Available     - Exists but not yet verified in this project
+Inactive      - Explicitly disabled or not permitted
+Needs Setup   - Required by project but not yet usable
 
----
+REGISTERED TOOLS
 
-## Registered Tools
+This table is the single source of truth for tool availability.
 
-| Tool | Adapter | Status | Last Verified | Notes |
-|------|---------|--------|---------------|-------|
-| <!-- Add tools here --> | | | | |
+Tool | Adapter | Status | Last Verified | Notes
+---- | ------- | ------ | ------------- | -----
+<!-- Add tools here --> | | | |
 
-**Example entries:**
-```
-| web-search | search | ✅ Active | 2025-01-15 | Via Claude |
-| google-drive | storage | ✅ Active | 2025-01-15 | OAuth configured |
-| google-ads | data | ✅ Active | 2025-01-10 | API v14 |
-| slack | communication | ⚠️ Available | - | Not tested |
-| database | data | ❌ Inactive | - | Not needed |
-```
+Example entries (do not assume availability):
+web-search | search | Active | 2025-01-15 | Via Claude
+google-drive | storage | Active | 2025-01-15 | OAuth configured
+google-ads | data | Active | 2025-01-10 | API v14
+slack | communication | Available | - | Not tested
+database | data | Inactive | - | Not needed
 
----
+ADAPTER SUMMARY
 
-## Adapter Summary
+Adapters describe capability class, not implementation details.
 
-Tools are categorized by what they do:
+Adapter | Purpose | Active Tools
+search | Find information | [count]
+storage | Store and retrieve files | [count]
+data | Query structured data | [count]
+communication | Send messages | [count]
+execution | Run code | [count]
 
-| Adapter | Purpose | Active Tools |
-|---------|---------|--------------|
-| search | Find information | <!-- count --> |
-| storage | Store/retrieve files | <!-- count --> |
-| data | Query structured data | <!-- count --> |
-| communication | Send messages | <!-- count --> |
-| execution | Run code | <!-- count --> |
+Adapter behavior definitions live in:
+.tools/adapters/
 
-See `.tools/adapters/` for detailed adapter definitions.
+HEALTH OVERVIEW
 
----
+Last health check: Never
 
-## Health Overview
+Tools needing attention:
+- Any tool with Status = Available
+- Any tool with Status = Needs Setup
+- Any tool not verified in the last 30 days
+- Any tool with known deprecation risk
 
-**Last health check:** [Never / Date]
+Run `Check tool health` to update verification dates.
+Health checks must not modify tools, credentials, or project state.
 
-**Tools needing attention:**
-- <!-- List any tools past their verification date -->
-- <!-- List any tools with known deprecations -->
+ADDING A NEW TOOL
 
-Run `Check tool health` to update.
+All steps are mandatory. Do not skip.
 
----
+1. Identify adapter type (search, storage, data, communication, execution)
+2. Create config file: .tools/installed/[tool-name].md
+3. Use template: .tools/templates/tool-config.md
+4. Add entry to this registry with Status = Available
+5. Test tool behavior in a non-destructive way
+6. Update Status to Active only after verification
+7. Record verification date
 
-## Adding a New Tool
+REMOVING OR DISABLING A TOOL
 
-1. Identify which adapter type it implements (search, storage, data, communication, execution)
-2. Create config file: `.tools/installed/[tool-name].md`
-3. Use template: `.tools/templates/tool-config.md`
-4. Add entry to this registry
-5. Test the tool works
-6. Update status to ✅ Active
+1. Update Status to Inactive in this registry
+2. Record reason in Notes
+3. Remove or revoke credentials if applicable
+4. Move config to .tools/archived/ if historical reference is needed
 
----
+Never delete evidence of prior tool usage without user approval.
 
-## Removing a Tool
+TOOL USAGE RULES
 
-1. Update status to ❌ Inactive in this registry
-2. Note reason in the Notes column
-3. Keep config file for reference (or move to `.tools/archived/`)
-4. Remove any credentials if applicable
+- Tools not listed here are considered unavailable
+- Tools marked Available or Needs Setup must not be used
+- Tools marked Inactive must never be used
+- Active tools must still respect HARD_STOPS and REASONING_CONTRACT
+- Tool failure must be logged and surfaced, not silently retried
 
----
+COMMANDS
 
-## Commands
+List tools          - Display this registry
+Tool status         - Summary of Active vs non-Active tools
+Verify [tool]       - Check configuration and readiness for a single tool
+Check tool health   - Verify all Active tools
+Add tool [name]     - Guided tool registration flow
 
-| Command | What It Does |
-|---------|--------------|
-| `List tools` | Show this registry |
-| `Check tool health` | Verify all active tools |
-| `Verify [tool]` | Check specific tool |
-| `Add tool [name]` | Walk through adding a new tool |
-| `Tool status` | Quick summary of what's available |
+OPTIONAL EXTENSIONS
 
----
+These are architectural enhancements, not defaults.
 
-## Optional Enhancements
+Watchlist
+Track mission-critical tools that require proactive monitoring.
+File: .tools/watchlist.md
 
-These are not required but may be useful for complex or long-running projects:
+Health Monitoring
+Scheduled verification for Active tools.
+Recommended for long-running or production-like projects.
 
-### Watchlist
-Track mission-critical tools that need proactive monitoring. Create `.tools/watchlist.md` if you need alerts when specific tools have updates or deprecations.
+Update Notifications
+Track breaking changes or deprecations for critical APIs.
 
-### Health Monitoring  
-Automated health checks on a schedule. Useful if tools change frequently or project spans months.
+Credential Rotation
+Defined protocol for rotating credentials.
+Must comply with HARD_STOPS.md.
 
-### Update Notifications
-Subscribe to changelogs or release notes for critical APIs. Consider for tools where breaking changes could impact deliverables.
+Fallback Chains
+Define secondary tools when primary tools fail.
+Fallbacks must also be registered and verified.
 
-### Credential Rotation
-Protocol for rotating API keys or tokens on a schedule. Important for security-sensitive projects.
-
-### Fallback Chains
-Define backup tools when primary fails (e.g., if primary search API is down, fall back to alternative). Useful for production-critical workflows.
-
----
-
-*These optional features are not included in base UDO. Implement as needed for your use case.*
+These extensions are optional and must be explicitly enabled by the user.
